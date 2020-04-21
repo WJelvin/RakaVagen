@@ -3,7 +3,9 @@ package se.aniam.rakavagen.webapi;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-
+/**
+ * Retrofit client for making http requests to SLs API
+ */
 public class HttpClient {
 
     private static Retrofit SLRetrofit;
