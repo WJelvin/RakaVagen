@@ -24,7 +24,7 @@
     <path
         android:pathData="M235 125C235 185.751 185.751 235 125 235C64.2487 235 15 185.751 15 125C15 64.2487 64.2487 15 125 15C185.751 15 235 64.2487 235 125Z"
         android:strokeWidth="30"
-        android:strokeColor="#00B8FF"
+        android:strokeColor="@color/colorPrimary"
         />
 
 </vector>

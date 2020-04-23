@@ -1,45 +1,56 @@
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/android_1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:clipToOutline="true"
     android:background="@drawable/android_1" >
 
-    <!-- Ellipse 1 -->
+
+
+    <!-- Compass background -->
     <View
         android:id="@+id/ellipse_1"
-        android:layout_width="220dp"
-        android:layout_height="220dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="70dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="47dp"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
         android:background="@drawable/ellipse_1"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.223" />
 
-    <!-- Ellipse 2 -->
+    <!-- Compass dot -->
     <View
         android:id="@+id/ellipse_2"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="173dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="150dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:background="@drawable/ellipse_2"
-        />
+        app:layout_constraintBottom_toBottomOf="@+id/ellipse_1"
+        app:layout_constraintEnd_toEndOf="@+id/ellipse_1"
+        app:layout_constraintStart_toStartOf="@+id/ellipse_1"
+        app:layout_constraintTop_toTopOf="@+id/ellipse_1" />
 
-    <!-- Arrow 1 -->
-    <View
-        android:id="@+id/arrow_1"
-        android:layout_width="88dp"
-        android:layout_height="1dp"
+    <TextView
+        android:id="@+id/stationName"
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="180dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="156dp"
-        android:background="@drawable/arrow_1"
-        />
+        android:gravity="center_horizontal"
+        android:text="@string/LoadingText"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ellipse_1"
+        app:layout_constraintVertical_bias="0.3" />
 
-</RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
