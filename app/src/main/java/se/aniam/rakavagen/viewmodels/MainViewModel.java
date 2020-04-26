@@ -11,6 +11,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import se.aniam.rakavagen.LiveData.BearingLiveData;
+import se.aniam.rakavagen.LiveData.DirectionLiveData;
 import se.aniam.rakavagen.LiveData.HeadingLiveData;
 import se.aniam.rakavagen.models.RetrievedStations;
 import se.aniam.rakavagen.models.Station;
@@ -27,6 +28,7 @@ public class MainViewModel extends AndroidViewModel {
     private MutableLiveData<Station> closestStation = new MutableLiveData<>();
     private BearingLiveData bearingLiveData;
     private HeadingLiveData headingLiveData;
+    private DirectionLiveData directionLiveData;
 
     /**
      * MainViewModel - Responsible for providing the View {@link MainActivity} with observable data
@@ -60,6 +62,7 @@ public class MainViewModel extends AndroidViewModel {
             @Override
             public void onResponse(Call<RetrievedStations> call, Response<RetrievedStations> response) {
                 bearingLiveData = new BearingLiveData(lastKnownLocation, closestStation);
+                directionLiveData = new DirectionLiveData(headingLiveData, bearingLiveData);
                 RetrievedStations stations = response.body();
                 closestStation.setValue(new Station(stations.getStopLocationOrCoordLocation().get(0).
                         getStopLocation().getName(),
@@ -90,5 +93,9 @@ public class MainViewModel extends AndroidViewModel {
 
     public HeadingLiveData getHeadingLiveData() {
         return headingLiveData;
+    }
+
+    public DirectionLiveData getDirectionLiveData() {
+        return directionLiveData;
     }
 }
