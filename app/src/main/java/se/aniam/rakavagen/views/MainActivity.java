@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private int PERMISSIONS_REQUEST_LOCATION_CODE = 123;
     private ImageView arrowImage;
     private MainViewModel viewModel;
+    private float degreeStart = 0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,34 +49,47 @@ public class MainActivity extends AppCompatActivity {
             if(viewModel.getClosestStation().getValue() == null) {
                 viewModel.fetchClosestStation(loc.getLatitude(), loc.getLongitude());
             }
-
-            // -------------------REWORK THIS WHEN ADDING BEARING-----------------------------------------------
-
-            arrowImage = findViewById(R.id.compass_arrow);
-            // rotation animation - reverse turn degree degrees
-            RotateAnimation ra = new RotateAnimation(
-                    0,
-                    180,
-                    Animation.RELATIVE_TO_SELF, 0.5f,
-                    Animation.RELATIVE_TO_SELF, 0.5f);
-            // set the compass animation after the end of the reservation status
-            ra.setFillAfter(true);
-            // set how long the animation for the compass image will take place
-            ra.setDuration(820);
-            // Start animation of compass image
-            arrowImage.startAnimation(ra);
-
-            // -------------------REWORK THIS WHEN ADDING BEARING-------------------------------------------------
-
-
         });
 
         // Start observing closest station
         viewModel.getClosestStation().observe(this, station -> {
             if (station != null) {
                 stationName.setText(station.getName());
+
+                // Observe bearing to station when one is received
+                viewModel.getBearingLiveData().observe(this, direction -> {
+                    System.out.println("bearing from view: " + direction);
+                });
+
+                // Observe heading of device (For logging and forcing livedata to update)
+                viewModel.getHeadingLiveData().observe(this, heading -> {
+
+                });
+
+                // Observe the direction that the station is in, and animate the arrow
+                // to point in that direction
+                viewModel.getDirectionLiveData().observe(this, direction -> {
+
+                    arrowImage = findViewById(R.id.compass_arrow);
+                    // Rotation animation
+                    RotateAnimation ra = new RotateAnimation(
+                            degreeStart,
+                            direction,
+                            Animation.RELATIVE_TO_SELF, 0.5f,
+                            Animation.RELATIVE_TO_SELF, 0.5f);
+                    ra.setFillAfter(true);
+                    // Set how long the animation for the arrow image will take
+                    ra.setDuration(400);
+                    // Start animation of arrow
+                    arrowImage.startAnimation(ra);
+                    // Set starting degree for arrow to current direction,
+                    // so it starts where it ended
+                    degreeStart = direction;
+                });
             }
         });
+
+
     }
 
     /**
@@ -90,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks if user has enabled GPS location.
+     * If not, prompts the user to go to settings and enable it.
+     */
     private void checkIfGpsEnabled() {
         LocationManager lm = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
         boolean gpsEnabled = false;
@@ -103,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Shows a dialog that asks the user to go to the settings screen and turn on GPS
+     */
     private void showSettingsDialog() {
         new AlertDialog.Builder(MainActivity.this)
                 .setMessage( "GPS must be enabled calculate closest metro station. Please activate GPS in Settings to use this application" )
