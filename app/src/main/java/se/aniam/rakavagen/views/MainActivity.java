@@ -74,8 +74,20 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getClosestStation().observe(this, station -> {
             if (station != null) {
                 stationName.setText(station.getName());
+
+                // Observe bearing to station
+                viewModel.getBearingLiveData().observe(this, direction -> {
+                    System.out.println("direction from view: " + direction);
+                });
+
+                // Observe heading of device
+                viewModel.getHeadingLiveData().observe(this, heading -> {
+                    System.out.println("HEADING: " + heading + " +++++++++++++++");
+                });
             }
         });
+
+
     }
 
     /**

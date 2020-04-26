@@ -1,13 +1,6 @@
 package se.aniam.rakavagen.viewmodels;
 
-import android.app.AlertDialog;
 import android.app.Application;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.location.LocationManager;
-import android.provider.Settings;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -16,9 +9,12 @@ import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import se.aniam.rakavagen.LiveData.BearingLiveData;
+import se.aniam.rakavagen.LiveData.HeadingLiveData;
 import se.aniam.rakavagen.models.RetrievedStations;
 import se.aniam.rakavagen.models.Station;
-import se.aniam.rakavagen.services.LocationService;
+import se.aniam.rakavagen.LiveData.LocationLiveData;
 import se.aniam.rakavagen.views.MainActivity;
 import se.aniam.rakavagen.webapi.ApiService;
 import se.aniam.rakavagen.webapi.HttpClient;
@@ -26,9 +22,11 @@ import se.aniam.rakavagen.webapi.HttpClient;
 
 public class MainViewModel extends AndroidViewModel {
 
-    private LocationService lastKnownLocation;
+    private LocationLiveData lastKnownLocation;
     private ApiService apiService;
     private MutableLiveData<Station> closestStation = new MutableLiveData<>();
+    private BearingLiveData bearingLiveData;
+    private HeadingLiveData headingLiveData;
 
     /**
      * MainViewModel - Responsible for providing the View {@link MainActivity} with observable data
@@ -36,33 +34,13 @@ public class MainViewModel extends AndroidViewModel {
      */
     public MainViewModel(@NonNull Application application) {
         super(application);
-        lastKnownLocation = new LocationService(getApplication());
+        lastKnownLocation = new LocationLiveData(getApplication());
         init();
     }
 
-    private void checkIfGpsAndNetworkEnabled() {
-        LocationManager lm = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
-        boolean gpsEnabled = false;
-        boolean networkEnabled = false;
-        try {
-            gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (!gpsEnabled && !networkEnabled) {
-            System.out.println("DU MÅSTE ENABLA GPS ----------------");
-        }
-    }
-
-
     /**
      * Initial method calls when the viewmodel is created
-     * Fetches device location using the {@link LocationService}
+     * Fetches device location using the {@link LocationLiveData}
      */
     public void init() {
         lastKnownLocation.startLocationUpdates();
@@ -74,18 +52,21 @@ public class MainViewModel extends AndroidViewModel {
      * @param longitude
      */
     public void fetchClosestStation(double latitude, double longitude)  {
+        headingLiveData = new HeadingLiveData(getApplication().getApplicationContext(), lastKnownLocation);
         apiService = HttpClient.getSLRetrofitInstance().create(ApiService.class);
         Call<RetrievedStations> call = apiService.getClosestStation(String.valueOf(latitude), String.valueOf(longitude));
 
         call.enqueue(new Callback<RetrievedStations>() {
             @Override
             public void onResponse(Call<RetrievedStations> call, Response<RetrievedStations> response) {
+                bearingLiveData = new BearingLiveData(lastKnownLocation, closestStation);
                 RetrievedStations stations = response.body();
                 closestStation.setValue(new Station(stations.getStopLocationOrCoordLocation().get(0).
                         getStopLocation().getName(),
                         stations.getStopLocationOrCoordLocation().get(0).getStopLocation().getLat(),
                         stations.getStopLocationOrCoordLocation().get(0).getStopLocation().getLon()
                 ));
+
             }
 
             @Override
@@ -99,8 +80,15 @@ public class MainViewModel extends AndroidViewModel {
         return closestStation;
     }
 
-    public LocationService getLastKnownLocation() {
+    public LocationLiveData getLastKnownLocation() {
         return this.lastKnownLocation;
     }
 
+    public BearingLiveData getBearingLiveData() {
+        return bearingLiveData;
+    }
+
+    public HeadingLiveData getHeadingLiveData() {
+        return headingLiveData;
+    }
 }
