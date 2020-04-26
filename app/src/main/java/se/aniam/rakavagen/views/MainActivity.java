@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import se.aniam.rakavagen.R;
@@ -17,7 +20,7 @@ import se.aniam.rakavagen.viewmodels.MainViewModelFactory;
 public class MainActivity extends AppCompatActivity {
 
     private int PERMISSIONS_REQUEST_LOCATION_CODE = 123;
-
+    private ImageView arrowImage;
     private MainViewModel viewModel;
 
     @Override
@@ -39,6 +42,26 @@ public class MainActivity extends AppCompatActivity {
             if(viewModel.getClosestStation().getValue() == null) {
                 viewModel.fetchClosestStation(loc.getLatitude(), loc.getLongitude());
             }
+
+            // -------------------REWORK THIS WHEN ADDING BEARING-----------------------------------------------
+
+            arrowImage = findViewById(R.id.compass_arrow);
+            // rotation animation - reverse turn degree degrees
+            RotateAnimation ra = new RotateAnimation(
+                    0,
+                    180,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f);
+            // set the compass animation after the end of the reservation status
+            ra.setFillAfter(true);
+            // set how long the animation for the compass image will take place
+            ra.setDuration(820);
+            // Start animation of compass image
+            arrowImage.startAnimation(ra);
+
+            // -------------------REWORK THIS WHEN ADDING BEARING-------------------------------------------------
+
+
         });
 
         // Start observing closest station
