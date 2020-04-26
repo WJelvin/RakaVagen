@@ -16,6 +16,13 @@ import static java.lang.Math.toRadians;
 
 public class BearingLiveData extends MediatorLiveData<Double> {
 
+    /**
+     * BearingLiveData that extends MediatorLiveData. Used to combine two different LiveDatas
+     * into one, meaning that if one of the below parameters are updated,
+     * BearingLiveData will calculate a new direction and emit it.
+     * @param currentLocation
+     * @param targetLocation
+     */
     public BearingLiveData(LocationLiveData currentLocation, MutableLiveData<Station> targetLocation) {
         addSource(currentLocation, currLoc -> {
             setValue(computeBearing(currLoc, targetLocation.getValue()));
@@ -28,6 +35,12 @@ public class BearingLiveData extends MediatorLiveData<Double> {
         });
     }
 
+    /**
+     * Calculates the bearing in degrees to the closest station.
+     * @param currentLoc
+     * @param targetLoc
+     * @return
+     */
     public double computeBearing(Location currentLoc, Station targetLoc) {
         double currentLat = toRadians(currentLoc.getLatitude());
         double currentLng = toRadians(currentLoc.getLongitude());

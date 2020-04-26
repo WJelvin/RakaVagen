@@ -40,6 +40,9 @@ public class LocationLiveData extends LiveData<Location> {
         startLocationUpdates();
     }
 
+    /**
+     * Creates a LocationRequest with parameters for the FusedLocationProviderClient
+     */
     private void createLocationRequest() {
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);

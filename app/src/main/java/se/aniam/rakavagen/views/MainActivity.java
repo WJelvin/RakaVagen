@@ -56,31 +56,34 @@ public class MainActivity extends AppCompatActivity {
             if (station != null) {
                 stationName.setText(station.getName());
 
-                // Observe bearing to station
+                // Observe bearing to station when one is received
                 viewModel.getBearingLiveData().observe(this, direction -> {
                     System.out.println("bearing from view: " + direction);
                 });
 
-                // Observe heading of device
+                // Observe heading of device (For logging and forcing livedata to update)
                 viewModel.getHeadingLiveData().observe(this, heading -> {
 
                 });
 
+                // Observe the direction that the station is in, and animate the arrow
+                // to point in that direction
                 viewModel.getDirectionLiveData().observe(this, direction -> {
 
                     arrowImage = findViewById(R.id.compass_arrow);
-                    // rotation animation - reverse turn degree degrees
+                    // Rotation animation
                     RotateAnimation ra = new RotateAnimation(
                             degreeStart,
                             direction,
                             Animation.RELATIVE_TO_SELF, 0.5f,
                             Animation.RELATIVE_TO_SELF, 0.5f);
-                    // set the compass animation after the end of the reservation status
                     ra.setFillAfter(true);
-                    // set how long the animation for the compass image will take place
+                    // Set how long the animation for the arrow image will take
                     ra.setDuration(400);
-                    // Start animation of compass image
+                    // Start animation of arrow
                     arrowImage.startAnimation(ra);
+                    // Set starting degree for arrow to current direction,
+                    // so it starts where it ended
                     degreeStart = direction;
                 });
             }
@@ -101,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks if user has enabled GPS location.
+     * If not, prompts the user to go to settings and enable it.
+     */
     private void checkIfGpsEnabled() {
         LocationManager lm = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
         boolean gpsEnabled = false;
@@ -114,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Shows a dialog that asks the user to go to the settings screen and turn on GPS
+     */
     private void showSettingsDialog() {
         new AlertDialog.Builder(MainActivity.this)
                 .setMessage( "GPS must be enabled calculate closest metro station. Please activate GPS in Settings to use this application" )

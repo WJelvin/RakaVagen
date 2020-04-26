@@ -25,6 +25,13 @@ public class HeadingLiveData extends MutableLiveData<Float> implements SensorEve
 
     private float azimuth;
 
+    /**
+     * HeadingLiveData contains the devices current heading. This is calculated using the phones
+     * accelerometer and its magnetic field sensor. Uses application context to access device sensors
+     * and the current location to calculate the magnetic field at the current latitude/longitude.
+     * @param context
+     * @param currentLocation
+     */
     public HeadingLiveData(final Context context, LocationLiveData currentLocation) {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -41,6 +48,11 @@ public class HeadingLiveData extends MutableLiveData<Float> implements SensorEve
                 SensorManager.SENSOR_DELAY_GAME);
     }
 
+    /**
+     * When a sensor in the device is changed this method is triggered and calculates the
+     * current heading which is then placed in the LiveData and emitted to all observers.
+     * @param event
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         final float alpha = 0.90f;
@@ -70,9 +82,7 @@ public class HeadingLiveData extends MutableLiveData<Float> implements SensorEve
             if (success) {
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
-                // Log.d(TAG, "azimuth (rad): " + azimuth);
                 azimuth = (float) Math.toDegrees(orientation[0]); // orientation
-//                azimuth = (azimuth + azimuthFix + 360) % 360;
                 if (geoField != null) {
                     azimuth += geoField.getDeclination();
                 }
