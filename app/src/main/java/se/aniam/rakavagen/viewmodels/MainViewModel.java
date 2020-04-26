@@ -1,6 +1,12 @@
 package se.aniam.rakavagen.viewmodels;
 
+import android.app.AlertDialog;
 import android.app.Application;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
+import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -33,6 +39,26 @@ public class MainViewModel extends AndroidViewModel {
         lastKnownLocation = new LocationService(getApplication());
         init();
     }
+
+    private void checkIfGpsAndNetworkEnabled() {
+        LocationManager lm = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
+        boolean gpsEnabled = false;
+        boolean networkEnabled = false;
+        try {
+            gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!gpsEnabled && !networkEnabled) {
+            System.out.println("DU MÅSTE ENABLA GPS ----------------");
+        }
+    }
+
 
     /**
      * Initial method calls when the viewmodel is created

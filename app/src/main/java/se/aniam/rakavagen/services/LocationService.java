@@ -1,10 +1,15 @@
 package se.aniam.rakavagen.services;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -20,6 +25,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.concurrent.Executor;
 
+import se.aniam.rakavagen.views.MainActivity;
+
 public class LocationService extends LiveData<Location> {
 
     private static final long INTERVAL = 500 * 10;
@@ -32,19 +39,21 @@ public class LocationService extends LiveData<Location> {
     /**
      * LocationService that extends LiveData. Observable by an activity or fragment.
      * This class is used to access the devices geolocation.
+     *
      * @param context is necessary to get FusedLocationProviderClient
      */
     public LocationService(final Context context) {
         // LiveData that fetches current location and sets it as a LiveData to be observed by a view
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         fusedLocationProviderClient.getLastLocation().addOnSuccessListener(location -> {
-            if(location != null) {
+            if (location != null) {
                 setValue(location);
             }
         });
         createLocationRequest();
         startLocationUpdates();
     }
+
     private void createLocationRequest() {
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);
