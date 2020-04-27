@@ -2,9 +2,10 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
 
-
+    // Background color
     <item android:drawable="@color/colorPrimaryDark"/>
 
+    // Logo
     <item>
         <bitmap
             android:src="@drawable/logo_raka"

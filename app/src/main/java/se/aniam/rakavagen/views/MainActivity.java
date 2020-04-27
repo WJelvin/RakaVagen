@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Set standard theme when creating activity. Otherwise splashscreen is shown.
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
