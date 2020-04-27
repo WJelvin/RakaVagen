@@ -71,12 +71,17 @@ public class MainViewModel extends AndroidViewModel {
                 directionLiveData = new DirectionLiveData(headingLiveData, bearingLiveData);
                 distanceLiveData = new DistanceLiveData(lastKnownLocation, closestStation);
                 RetrievedStations stations = response.body();
-                closestStation.setValue(new Station(stations.getStopLocationOrCoordLocation().get(0).
-                        getStopLocation().getName(),
-                        stations.getStopLocationOrCoordLocation().get(0).getStopLocation().getLat(),
-                        stations.getStopLocationOrCoordLocation().get(0).getStopLocation().getLon()
-                ));
-
+                if (stations.getStopLocationOrCoordLocation() != null) {
+                    closestStation.setValue(new Station(stations.getStopLocationOrCoordLocation().get(0).
+                            getStopLocation().getName(),
+                            stations.getStopLocationOrCoordLocation().get(0).getStopLocation().getLat(),
+                            stations.getStopLocationOrCoordLocation().get(0).getStopLocation().getLon()
+                    ));
+                } else {
+                    // If no station is fetched (because too far away) create a mock station to print to screen.
+                    // This can be done better probably
+                    closestStation.setValue(new Station("No station within 2 km", getLastKnownLocation().getValue().getLatitude(), getLastKnownLocation().getValue().getLongitude()));
+                }
             }
 
             @Override
