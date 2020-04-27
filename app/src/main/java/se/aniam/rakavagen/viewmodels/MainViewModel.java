@@ -1,6 +1,8 @@
 package se.aniam.rakavagen.viewmodels;
 
 import android.app.Application;
+import android.location.Location;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -12,6 +14,7 @@ import retrofit2.Response;
 
 import se.aniam.rakavagen.LiveData.BearingLiveData;
 import se.aniam.rakavagen.LiveData.DirectionLiveData;
+import se.aniam.rakavagen.LiveData.DistanceLiveData;
 import se.aniam.rakavagen.LiveData.HeadingLiveData;
 import se.aniam.rakavagen.models.RetrievedStations;
 import se.aniam.rakavagen.models.Station;
@@ -29,6 +32,7 @@ public class MainViewModel extends AndroidViewModel {
     private BearingLiveData bearingLiveData;
     private HeadingLiveData headingLiveData;
     private DirectionLiveData directionLiveData;
+    private DistanceLiveData distanceLiveData;
 
     /**
      * MainViewModel - Responsible for providing the View {@link MainActivity} with observable data
@@ -61,8 +65,11 @@ public class MainViewModel extends AndroidViewModel {
         call.enqueue(new Callback<RetrievedStations>() {
             @Override
             public void onResponse(Call<RetrievedStations> call, Response<RetrievedStations> response) {
+                // When closest station is received we can start initiating our livedatas
+                // because we then have both our last known location, and our target station
                 bearingLiveData = new BearingLiveData(lastKnownLocation, closestStation);
                 directionLiveData = new DirectionLiveData(headingLiveData, bearingLiveData);
+                distanceLiveData = new DistanceLiveData(lastKnownLocation, closestStation);
                 RetrievedStations stations = response.body();
                 closestStation.setValue(new Station(stations.getStopLocationOrCoordLocation().get(0).
                         getStopLocation().getName(),
@@ -79,6 +86,7 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
+    // Most of the getters for our livedata classes return LiveData to make them immutable from the view
     public LiveData<Station> getClosestStation() {
         return closestStation;
     }
@@ -87,15 +95,19 @@ public class MainViewModel extends AndroidViewModel {
         return this.lastKnownLocation;
     }
 
-    public BearingLiveData getBearingLiveData() {
+    public LiveData<Double> getBearingLiveData() {
         return bearingLiveData;
     }
 
-    public HeadingLiveData getHeadingLiveData() {
+    public LiveData<Float> getHeadingLiveData() {
         return headingLiveData;
     }
 
-    public DirectionLiveData getDirectionLiveData() {
+    public LiveData<Float> getDirectionLiveData() {
         return directionLiveData;
+    }
+
+    public LiveData<Float> getDistanceLiveData() {
+        return distanceLiveData;
     }
 }

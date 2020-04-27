@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this, MainViewModelFactory.getInstance(getApplication())).get(MainViewModel.class);
 
         setContentView(R.layout.activity_main);
-        TextView mainText = findViewById(R.id.mainText);
+        TextView distanceText = findViewById(R.id.distanceText);
         TextView stationName = findViewById(R.id.stationName);
 
         checkForLocationPermission();
@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Start observing device location
         viewModel.getLastKnownLocation().observe(this, loc -> {
-            mainText.setText(loc.getLatitude() + " " + loc.getLongitude());
             if(viewModel.getClosestStation().getValue() == null) {
                 viewModel.fetchClosestStation(loc.getLatitude(), loc.getLongitude());
             }
@@ -86,6 +85,11 @@ public class MainActivity extends AppCompatActivity {
                     // Set starting degree for arrow to current direction,
                     // so it starts where it ended
                     degreeStart = direction;
+                });
+
+                // Observed DistanceLiveData to update the UI with the distance to the closest station
+                viewModel.getDistanceLiveData().observe(this, distance -> {
+                    distanceText.setText("Distance to station: " + String.format("%.0f", distance) + " m");
                 });
             }
         });
