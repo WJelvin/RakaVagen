@@ -1,7 +1,7 @@
 package se.aniam.rakavagen.viewmodels;
 
 import android.app.Application;
-import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -33,9 +33,11 @@ public class MainViewModel extends AndroidViewModel {
     private HeadingLiveData headingLiveData;
     private DirectionLiveData directionLiveData;
     private DistanceLiveData distanceLiveData;
+    private static final String TAG = MainViewModel.class.getSimpleName();
 
     /**
      * MainViewModel - Responsible for providing the View {@link MainActivity} with observable data
+     *
      * @param application is needed to access the application context
      */
     public MainViewModel(@NonNull Application application) {
@@ -54,10 +56,11 @@ public class MainViewModel extends AndroidViewModel {
 
     /**
      * Calls Trafiklabs API to fetch the closest metro station based on:
+     *
      * @param latitude
      * @param longitude
      */
-    public void fetchClosestStation(double latitude, double longitude)  {
+    public void fetchClosestStation(double latitude, double longitude) {
         headingLiveData = new HeadingLiveData(getApplication().getApplicationContext(), lastKnownLocation);
         apiService = HttpClient.getSLRetrofitInstance().create(ApiService.class);
         Call<RetrievedStations> call = apiService.getClosestStation(String.valueOf(latitude), String.valueOf(longitude));
@@ -70,8 +73,19 @@ public class MainViewModel extends AndroidViewModel {
                 bearingLiveData = new BearingLiveData(lastKnownLocation, closestStation);
                 directionLiveData = new DirectionLiveData(headingLiveData, bearingLiveData);
                 distanceLiveData = new DistanceLiveData(lastKnownLocation, closestStation);
+
+                System.out.println(response.body().toString());
+
                 RetrievedStations stations = response.body();
-                if (stations.getStopLocationOrCoordLocation() != null) {
+
+                // If no requestId there's most likely a server error and
+                // loading station is not possible at the moment
+                if (stations.getRequestId() == null) {
+                    Log.e(TAG, "Failed loading station, requestId null");
+                    closestStation.setValue(new Station("Error loading station",
+                            getLastKnownLocation().getValue().getLatitude(),
+                            getLastKnownLocation().getValue().getLongitude()));
+                } else if (stations.getStopLocationOrCoordLocation() != null) {
                     closestStation.setValue(new Station(stations.getStopLocationOrCoordLocation().get(0).
                             getStopLocation().getName(),
                             stations.getStopLocationOrCoordLocation().get(0).getStopLocation().getLat(),
@@ -79,14 +93,18 @@ public class MainViewModel extends AndroidViewModel {
                     ));
                 } else {
                     // If no station is fetched (because too far away) create a mock station to print to screen.
-                    // This can be done better probably
+                    Log.i(TAG, "No station within 2km");
                     closestStation.setValue(new Station("No station within 2 km", getLastKnownLocation().getValue().getLatitude(), getLastKnownLocation().getValue().getLongitude()));
                 }
             }
 
             @Override
             public void onFailure(Call<RetrievedStations> call, Throwable t) {
-                System.out.println("FAILED FETCH STATION");
+                //In case we get an status code other than 200
+                Log.e(TAG, "onFailure: Error loading station from API");
+                closestStation.setValue(new Station("Error loading station",
+                        getLastKnownLocation().getValue().getLatitude(),
+                        getLastKnownLocation().getValue().getLongitude()));
             }
         });
     }
