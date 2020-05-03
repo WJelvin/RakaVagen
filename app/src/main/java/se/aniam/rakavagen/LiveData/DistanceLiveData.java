@@ -19,12 +19,10 @@ public class DistanceLiveData extends MediatorLiveData<Float> {
     public DistanceLiveData(LocationLiveData currentLocation, MutableLiveData<Station> targetLocation) {
         addSource(currentLocation, currLoc -> {
             setValue(computeDistance(currLoc, targetLocation.getValue()));
-            System.out.println("Livedata value: " + getValue());
         });
 
         addSource(targetLocation, targetLoc -> {
             setValue(computeDistance(currentLocation.getValue(), targetLoc));
-            System.out.println("Livedata value2: " + getValue());
         });
     }
 

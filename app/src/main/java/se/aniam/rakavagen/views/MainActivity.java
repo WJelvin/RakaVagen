@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
                 // Observe bearing to station when one is received
                 viewModel.getBearingLiveData().observe(this, direction -> {
-                    System.out.println("bearing from view: " + direction);
                 });
 
                 // Observe heading of device (For logging and forcing livedata to update)

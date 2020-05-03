@@ -26,12 +26,10 @@ public class BearingLiveData extends MediatorLiveData<Double> {
     public BearingLiveData(LocationLiveData currentLocation, MutableLiveData<Station> targetLocation) {
         addSource(currentLocation, currLoc -> {
             setValue(computeBearing(currLoc, targetLocation.getValue()));
-            System.out.println("Livedata value: " + getValue());
         });
 
         addSource(targetLocation, targetLoc -> {
             setValue(computeBearing(currentLocation.getValue(), targetLoc));
-            System.out.println("Livedata value2: " + getValue());
         });
     }
 
