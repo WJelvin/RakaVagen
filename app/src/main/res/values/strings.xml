@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Raka Vagen</string>
+    <string name="app_name">Raka Vägen</string>
+    <string name="LoadingText">Loading..</string>
 </resources>
