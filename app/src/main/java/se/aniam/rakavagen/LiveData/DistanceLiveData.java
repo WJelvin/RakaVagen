@@ -13,6 +13,7 @@ public class DistanceLiveData extends MediatorLiveData<Float> {
      * DistanceLiveData that extends MediatorLiveData. Used to combine two different LiveDatas
      * into one, meaning that if one of the below parameters are updated,
      * DistanceLiveData will calculate a new direction and emit it.
+     *
      * @param currentLocation
      * @param targetLocation
      */
@@ -28,6 +29,7 @@ public class DistanceLiveData extends MediatorLiveData<Float> {
 
     /**
      * Calculates the distance in meters to the closest station.
+     *
      * @param currentLoc
      * @param targetLoc
      * @return

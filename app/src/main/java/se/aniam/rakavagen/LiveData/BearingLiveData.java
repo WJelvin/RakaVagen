@@ -20,6 +20,7 @@ public class BearingLiveData extends MediatorLiveData<Double> {
      * BearingLiveData that extends MediatorLiveData. Used to combine two different LiveDatas
      * into one, meaning that if one of the below parameters are updated,
      * BearingLiveData will calculate a new direction and emit it.
+     *
      * @param currentLocation
      * @param targetLocation
      */
@@ -35,6 +36,7 @@ public class BearingLiveData extends MediatorLiveData<Double> {
 
     /**
      * Calculates the bearing in degrees to the closest station.
+     *
      * @param currentLoc
      * @param targetLoc
      * @return
