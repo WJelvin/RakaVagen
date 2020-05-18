@@ -29,6 +29,7 @@ public class HeadingLiveData extends MutableLiveData<Float> implements SensorEve
      * HeadingLiveData contains the devices current heading. This is calculated using the phones
      * accelerometer and its magnetic field sensor. Uses application context to access device sensors
      * and the current location to calculate the magnetic field at the current latitude/longitude.
+     *
      * @param context
      * @param currentLocation
      */
@@ -51,6 +52,7 @@ public class HeadingLiveData extends MutableLiveData<Float> implements SensorEve
     /**
      * When a sensor in the device is changed this method is triggered and calculates the
      * current heading which is then placed in the LiveData and emitted to all observers.
+     *
      * @param event
      */
     @Override

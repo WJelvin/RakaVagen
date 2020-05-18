@@ -2,6 +2,7 @@ package se.aniam.rakavagen.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,6 +14,7 @@ public class MainViewModelFactory extends ViewModelProvider.AndroidViewModelFact
     /**
      * Creates a {@code AndroidViewModelFactory}
      * This Factory creates an AndroidViewModel for the MainActivity
+     *
      * @param application an application to pass in AndroidViewModel
      */
     public MainViewModelFactory(@NonNull Application application) {

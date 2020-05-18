@@ -73,7 +73,7 @@ public class MainViewModel extends AndroidViewModel {
                 bearingLiveData = new BearingLiveData(lastKnownLocation, closestStation);
                 directionLiveData = new DirectionLiveData(headingLiveData, bearingLiveData);
                 distanceLiveData = new DistanceLiveData(lastKnownLocation, closestStation);
-                
+
                 RetrievedStations stations = response.body();
 
                 // If no requestId there's most likely a server error and
